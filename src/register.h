@@ -1,14 +1,15 @@
 #ifndef REGISTER_H
 #define REGISTER_H
 
+#include <string>
+
 class Register {
     public:
-
-    private: 
-        char index;
-        char data;  // 8 bit reg
-
+        Register(std::string type = "");
+        void write(char data);
+    private:
+        std::string type;
+        char data;
 };
-
 
 #endif

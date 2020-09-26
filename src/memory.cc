@@ -9,7 +9,7 @@ Memory::Memory(unsigned int size_kb) {
     std::memset(MEM, 0, size);
 }
 
-void rangeCheck(int addr, int size) {
+void rangeCheck(unsigned int addr, unsigned int size) {
     if(addr < 0 || addr >= size)
         throw std::out_of_range("ERROR: Address out of range: " + std::to_string(addr));
 }

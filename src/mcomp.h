@@ -9,6 +9,12 @@
 
 #include <string>
 
+#ifdef ETI660
+#define BASE_ADDR 0x600
+#else
+#define BASE_ADDR 0x200
+#endif
+
 class Mcomp {
     public:
         Mcomp();
@@ -16,11 +22,11 @@ class Mcomp {
          * Load a program with filepath "path" into memory at
          * starting address "addr"
          */
-        void load(const std::string& path, unsigned int addr);
+        void load(const std::string& path, unsigned int addr = BASE_ADDR);
         /*
          * Load and then jump to that addr
          */
-        void run(const std::string& path, unsigned int addr);
+        void run(const std::string& path, unsigned int addr = BASE_ADDR);
     private:
         Processor CPU;
         Memory RAM;

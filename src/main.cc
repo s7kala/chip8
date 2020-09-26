@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     } else {
         std::string file = argv[argc - 1];
         // evaluate options here
-        //
+        // ------
         try {
             Mcomp emulator;
             emulator.load(file);

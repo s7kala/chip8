@@ -25,7 +25,7 @@ class Memory {
         unsigned int getSize() const;
         ~Memory();
     private:
-        char* MEM;
+        char* MEM = nullptr;
         unsigned int size = 0;
 };
 
