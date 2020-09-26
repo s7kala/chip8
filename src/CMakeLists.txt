@@ -3,4 +3,4 @@ project(src)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(src main.cc memory.cc)
+add_executable(src main.cc mcomp.cc processor.cc register.cc memory.cc)
