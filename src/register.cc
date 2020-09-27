@@ -2,7 +2,8 @@
 
 #include <utility>
 
-Register::Register(std::string type): type{std::move(type)}, data{0} {}
+Register::Register(std::string type, char data):
+    label{std::move(type)}, data{data} {}
 
 void Register::write(char d) {
     data = d;

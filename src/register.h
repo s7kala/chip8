@@ -5,10 +5,10 @@
 
 class Register {
     public:
-        Register(std::string type = "");
+        explicit Register(std::string type = "", char data = 0);
         void write(char data);
     private:
-        std::string type;
+        std::string label;
         char data;
 };
 

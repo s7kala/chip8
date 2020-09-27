@@ -6,26 +6,26 @@ class Memory {
         // Initialize memory with size size_kb in kilobytes
         explicit Memory(unsigned int size_kb = 4);
         // Write value to MEM[addr]
-        void setAddr(unsigned int addr, char value);
+        void setAddr(unsigned int addr, unsigned char value);
         /*
          * Write to mem with char* of size n
          * If n exceeds MEM size, the write is done for as long
          * as possible
          */
-        void setAddrv(unsigned int addr, const char value[], int n);
+        void setAddrv(unsigned int addr, const unsigned char value[], int n);
         // Get value stored at MEM[addr]
-        char getAddr(unsigned int addr) const;
+        unsigned char getAddr(unsigned int addr) const;
         /*
          * Read values starting from addr into arv[] of length n
          * If n exceeds MEM size, the read is done for as long
          * as possible
          */
-        char* getAddrv(unsigned int addr, char arv[], int n) const;
+        unsigned char* getAddrv(unsigned int addr, unsigned char arv[], int n) const;
         // Get size of Memory
         unsigned int getSize() const;
         ~Memory();
     private:
-        char* MEM = nullptr;
+        unsigned char* MEM = nullptr;
         unsigned int size = 0;
 };
 
