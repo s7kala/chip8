@@ -1,6 +1,7 @@
 #include "mcomp.h"
 #include <iostream>
 #include <vector>
+#include "ch8excepts.h"
 
 void use(const char* progname) {
     std::cout << progname << " " << "[options] [filename]\n";
@@ -39,6 +40,9 @@ int main(int argc, char** argv) {
         try {
             Mcomp emulator;
             emulator.run(file);
+        } catch (ProcessorException& e) {
+            std::cout << e.what() << std::endl;
+            return 1;
         } catch (std::exception& e) {
             std::cout << e.what() << std::endl;
         }

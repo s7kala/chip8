@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 # add_compile_options(-DETI660)
 
-add_executable(src main.cc mcomp.cc processor.cc register.cc memory.cc subject.cc)
+add_executable(src main.cc mcomp.cc processor.cc memory.cc subject.cc)

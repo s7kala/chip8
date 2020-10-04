@@ -3,13 +3,15 @@
 #include "display.h"
 
 #include <fstream>
-Mcomp::Mcomp(): RAM{new Memory(4)}, CPU{RAM}, screen{nullptr}  {
+
+Mcomp::Mcomp(): RAM{new Memory(4)}, CPU(RAM), screen{nullptr} {
     CPU.attach(screen);
 }
 
 void Mcomp::run(const std::string &path, uint16_t addr) {
     uint16_t retAddr = load(path, addr);
     CPU.jump(addr);
+    CPU.run(retAddr);
 }
 
 uint16_t Mcomp::load(const std::string &path, uint16_t addr) {

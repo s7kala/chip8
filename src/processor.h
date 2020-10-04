@@ -4,11 +4,14 @@
 #include "memory.h"
 #include "subject.h"
 #include <vector>
+#include <stack>
 #include <cstdint>
 
 #define GPR_NO 16
+/*
+ * Add later (for now, call stack is environment-dependent)
 #define STACK_SIZE 16
-
+*/
 class Processor : public Subject {
     public:
         explicit Processor(Memory* pMem);
@@ -28,9 +31,10 @@ class Processor : public Subject {
         uint16_t I;
         uint16_t PC;
         uint8_t SP;
-        std::vector<uint8_t> stack;
+        std::stack<uint8_t> callStack;
         Memory* pMem;
         void executeInstruction(uint16_t opcode);
+        bool compareVxkk(uint16_t opcode);
 };
 
 #endif

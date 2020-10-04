@@ -4,7 +4,6 @@
 // microcomputer to run chip8 programs
 
 #include "processor.h"
-
 #include <string>
 
 #ifdef ETI660
@@ -24,9 +23,9 @@ class Mcomp {
         void run(const std::string& path, uint16_t addr = BASE_ADDR);
         ~Mcomp();
     private:
+        Memory* RAM;
         Processor CPU;
-        Memory *RAM;
-        Display *screen;
+        Display* screen;
         /*
          * Load a program with filepath "path" into memory at
          * starting address "addr", returns end addr
