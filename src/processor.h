@@ -35,6 +35,9 @@ class Processor : public Subject {
         Memory* pMem;
         void executeInstruction(uint16_t opcode);
         bool compareVxkk(uint16_t opcode);
+        bool compareVxVy(uint16_t opcode);
+        template<typename T>
+        void setVxVy(int Vx, int Vy, T op);
 };
 
 #endif

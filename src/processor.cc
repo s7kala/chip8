@@ -6,6 +6,35 @@
  * Can possibly replace member SP with typedef callStack.top()
  */
 
+/* ***************************** METHOD ABSTRACTIONS ********************************* */
+
+
+/* ********** COMMON FUNCTIONS AND HELPERS ************* */
+
+int getVx(uint16_t opcode) {
+    int vx = (opcode & 0x0f00) >> 8;
+    return vx;
+}
+
+/*
+ * Return index of register Vx and byte kk from opcode nxkk
+ */
+std::pair<int, uint8_t> getVxkk(uint16_t opcode) {
+    uint8_t byte = (opcode & 0x00ff);
+    return std::make_pair(getVx(opcode), byte);
+}
+
+/*
+ * Return index of register Vx and Vy from opcode nxym
+ */
+std::pair<int, int> getVxVy(uint16_t opcode) {
+    return std::make_pair(getVx(opcode), getVx(opcode << 4));
+}
+
+void InvalidCPUInstr(uint16_t opcode) {
+    throw InvalidCPUInstruction("Unrecognized CPU instruction " + std::to_string(opcode));
+}
+
 Processor::Processor(Memory* pMem): pMem{pMem} {
     for(int i = 0; i < GPR_NO; ++i)
         registers.emplace_back(0);
@@ -30,13 +59,24 @@ Info Processor::getInfo() const {
 
 }
 
-/* REMOVE THIS SOON - WRITE A MORE GENERAL HELPER TO RETURN Vxkk and VxVy
+/*
  * Returns true if register Vx == kk
  */
 bool Processor::compareVxkk(uint16_t opcode) {
     auto regNo = (opcode & 0x0f00) >> 8;
     uint8_t byte = (opcode & 0x00ff);
     return (registers.at(regNo) == byte);
+}
+
+bool Processor::compareVxVy(uint16_t opcode) {
+    auto reg1No = (opcode & 0x0f00) >> 8;
+    auto reg2No = (opcode & 0x00f0) >> 8;
+    return (registers.at(reg1No) == registers.at(reg2No));
+}
+
+template <typename T>
+void Processor::setVxVy(int Vx, int Vy, T op) {
+    registers.at(Vx) = op(registers.at(Vx), registers.at(Vy));
 }
 
 void Processor::executeInstruction(uint16_t opcode) {
@@ -95,6 +135,76 @@ void Processor::executeInstruction(uint16_t opcode) {
          * 5xy0 - SE Vx, Vy
          * Skip next instruction if Vx = Vy
          */
+        case 0x5000 ... 0x5fff:
+            if(opcode & 0x000f)
+                InvalidCPUInstr(opcode);
+            if(compareVxVy(opcode))
+                PC += 2;
+            break;
+        /*
+         * 6xkk - LD Vx, byte
+         * Set Vx = kk
+         */
+        case 0x6000 ... 0x6fff: {
+            auto Vxkk = getVxkk(opcode);
+            registers.at(Vxkk.first) = Vxkk.second;
+        } break;
+        /*
+         * 7xkk - ADD Vx, byte
+         * Set Vx = Vx + kk
+         */
+        case 0x7000 ... 0x7fff: {
+            auto Vxkk = getVxkk(opcode);
+            registers.at(Vxkk.first) += Vxkk.second;
+        } break;
+        /*
+         * 8xyN - N Vx, Vy
+         * N is one of {1,...,7} U {e}
+         */
+        case 0x8000 ... 0x8fff: {
+            int instruction = opcode & 0x000f;
+            auto VxVy = getVxVy(opcode);
+            auto Vx = VxVy.first;
+            auto Vy = VxVy.second;
+            switch(instruction) {
+                /*
+                 * 8xy0 - LD Vx, Vy
+                 * Set Vx = Vy
+                 */
+                case 0:
+                    registers.at(Vx) = registers.at(Vy);
+                    break;
+                /*
+                 * 8xy1 - OR Vx, Vy
+                 * Set Vx = Vx | Vy
+                 */
+                case 1:
+                    setVxVy(Vx, Vy, std::bit_or<>());
+                    break;
+                /*
+                 * 8xy2 - AND Vx, Vy
+                 * Set Vx = Vx & Vy
+                 */
+                case 2:
+                    setVxVy(Vx, Vy, std::bit_and<>());
+                    break;
+                /*
+                 * 8xy3 - XOR Vx, Vy
+                 * Set Vx = Vx XOR Vy
+                 */
+                case 3:
+                    setVxVy(Vx, Vy, std::bit_xor<>());
+                    break;
+                /*
+                 * 8xy4 - ADD Vx, Vy
+                 * Set Vx = Vx + Vy, set VF = carry
+                 */
+                case 4:
+                    set
+            }
+
+        } break;
+
         default: throw InvalidCPUInstruction("Unrecognized CPU instruction : " + std::to_string(opcode));
     }
 }
