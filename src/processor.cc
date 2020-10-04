@@ -11,6 +11,9 @@
 
 /* ********** COMMON FUNCTIONS AND HELPERS ************* */
 
+/*
+ * Return index of register Vx from opcode LxMN
+ */
 int getVx(uint16_t opcode) {
     int vx = (opcode & 0x0f00) >> 8;
     return vx;
@@ -31,9 +34,16 @@ std::pair<int, int> getVxVy(uint16_t opcode) {
     return std::make_pair(getVx(opcode), getVx(opcode << 4));
 }
 
+/*
+ * Throw exception on invalid opcode
+ */
 void InvalidCPUInstr(uint16_t opcode) {
     throw InvalidCPUInstruction("Unrecognized CPU instruction " + std::to_string(opcode));
 }
+
+
+
+/* ********************************* METHODS *************************************** */
 
 Processor::Processor(Memory* pMem): pMem{pMem} {
     for(int i = 0; i < GPR_NO; ++i)
@@ -53,6 +63,10 @@ void Processor::run(uint16_t retAddr) {
         PC += 2;
         executeInstruction(opcode);
     }
+}
+
+uint8_t addReg(uint8_t a, uint8_t b) {
+
 }
 
 Info Processor::getInfo() const {
@@ -199,8 +213,26 @@ void Processor::executeInstruction(uint16_t opcode) {
                  * 8xy4 - ADD Vx, Vy
                  * Set Vx = Vx + Vy, set VF = carry
                  */
-                case 4:
-                    set
+                case 4: {
+                    uint16_t result = registers.at(Vx) + registers.at(Vy);
+                    registers.at(GPR_NO - 1) = (result > 255);
+                    registers.at(Vx) = result & 0xff;
+                } break;
+                /*
+                 * 8xy5 - SUB Vx, Vy
+                 * Set Vx = Vx - Vy, set VF = NOT borrow
+                 */
+                case 5:
+                    registers.at(GPR_NO - 1) = (registers.at(Vx) > registers.at(Vy));
+                    registers.at(Vx) = registers.at(Vx) - registers.at(Vy);
+                    break;
+                /*
+                 * 8xy6 - SHR Vx
+                 * Set Vx = Vx >> 1
+                 */
+                case 6:
+
+                default: InvalidCPUInstr(opcode);
             }
 
         } break;
