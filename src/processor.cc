@@ -1,6 +1,7 @@
 #include "processor.h"
 #include "ch8excepts.h"
 
+
 /*
  * TO-DO:
  * Can possibly replace member SP with typedef callStack.top()
@@ -45,7 +46,7 @@ void InvalidCPUInstr(uint16_t opcode) {
 
 /* ********************************* METHODS *************************************** */
 
-Processor::Processor(Memory* pMem): pMem{pMem} {
+Processor::Processor(Memory* pMem): pMem{pMem}, engine{dev()}, dist(0,255) {
     for(int i = 0; i < GPR_NO; ++i)
         registers.emplace_back(0);
     delay = sound = I = PC = SP = 0;
@@ -118,7 +119,7 @@ void Processor::executeInstruction(uint16_t opcode) {
          * Jump to location nnn
          */
         case 0x1000 ... 0x1fff:
-            PC = opcode - 0x1000;
+            PC = opcode & 0x0fff;
             break;
         /*
          * 2nnn - CALL addr
@@ -127,7 +128,7 @@ void Processor::executeInstruction(uint16_t opcode) {
         case 0x2000 ... 0x2fff:
             callStack.push(PC);
             SP = callStack.top();
-            PC = opcode - 0x2000;
+            PC = opcode & 0x0fff;
             break;
         /*
          * 3xkk - SE Vx, byte
@@ -231,12 +232,177 @@ void Processor::executeInstruction(uint16_t opcode) {
                  * Set Vx = Vx >> 1
                  */
                 case 6:
-
+                    registers.at(GPR_NO - 1) = (registers.at(Vx) & 0x01);
+                    registers.at(Vx) >>= 1;
+                /*
+                 * 8xy7 - SUBN Vx, Vy
+                 * Set Vx = Vy - Vx, set VF = NOT borrow
+                 */
+                case 7:
+                    registers.at(GPR_NO - 1) = (registers.at(Vy) > registers.at(Vx));
+                    registers.at(Vx) = registers.at(Vy) - registers.at(Vx);
+                /*
+                 * 8xyE - SHL Vx
+                 * Set Vx = Vx << 1
+                 */
+                case 14:
+                    registers.at(GPR_NO - 1) = (registers.at(Vx) >> 7);
                 default: InvalidCPUInstr(opcode);
             }
-
         } break;
+        /*
+         * 9xy0 - SNE Vx, Vy
+         * Skip next instruction if Vx != Vy
+         */
+        case 0x9000 ... 0x9fff: {
+            if (opcode & 0x000f)
+                InvalidCPUInstr(opcode);
+            auto VxVy = getVxVy(opcode);
+            if (registers.at(VxVy.first) != registers.at(VxVy.second))
+                PC += 2;
+        } break;
+        /*
+         * Annn - LD I, addr
+         * Set I = nnn
+         */
+        case 0xa000 ... 0xafff:
+            I = (opcode & 0x0fff);
+            break;
+        /*
+         * Bnnn - JP V0, addr
+         * Jump to location nnn + V0
+         */
+        case 0xb000 ... 0xbfff:
+            PC = (opcode & 0x0fff) + registers.at(0);
+            break;
+        /*
+         * Cxkk - RND Vx, byte
+         * Set Vx = random byte & kk
+         */
+        case 0xc000 ... 0xcfff: {
+            auto Vxkk = getVxkk(opcode);
+            uint8_t rbyte = dist(engine);
+            registers.at(Vxkk.first) = (rbyte & Vxkk.second);
+        } break;
+        /*
+         * Dxyn - DRW Vx, Vy, nibble
+         * Display n-byte sprite starting at memory location I at
+         * (Vx, Vy), set VF = collision
+         */
+        case 0xd000 ... 0xdfff: {
+            uint8_t n = (opcode & 0x000f);
+            uint8_t sprite[n];
+            pMem->getAddrv(I, sprite, n);
+            /*
+             * Add display stuff here
+             */
+        } break;
+        /*
+         * Ex9E - SKP Vx
+         * Skip next instruction if key with the value of Vx is pressed
+         * ExA1 - SKNP Vx
+         * Skip next instruction if key with the value of Vx is not pressed
+         */
+        case 0xe000 ... 0xefff: {
+            /*
+             * Add keyboard stuff here
+             */
+            auto Vxkk = getVxkk(opcode);
+            uint8_t Vx = Vxkk.first;
+            uint8_t skip = Vxkk.second;
+            if(skip == 0x9e) {
 
-        default: throw InvalidCPUInstruction("Unrecognized CPU instruction : " + std::to_string(opcode));
+            } else if(skip == 0xa1) {
+
+            } else InvalidCPUInstr(opcode);
+        }
+        /*
+         * FxPQ - PQ Vx
+         * Do operation PQ on register Vx
+         */
+        case 0xf000 ... 0xffff: {
+            auto Vxkk = getVxkk(opcode);
+            uint8_t Vx = Vxkk.first;
+            uint8_t subop = Vxkk.second;
+            switch (subop) {
+                /*
+                 * Fx07 - LD Vx, DT
+                 * Set Vx = delay timer value
+                 */
+                case 0x07:
+                    registers.at(Vx) = delay;
+                    break;
+                /*
+                 * Fx0A - LD Vx, K
+                 * Wait for a key press, store the value of the key in Vx
+                 */
+                case 0x0a:
+                    // Add keyboard stuff here
+                    break;
+                /*
+                 * Fx15 - LD DT, Vx
+                 * Set delay timer = Vx
+                 */
+                case 0x15:
+                    delay = registers.at(Vx);
+                    break;
+                /*
+                 * Fx18 - LD ST, Vx
+                 * Set sound timer = Vx
+                 */
+                case 0x18:
+                    sound = registers.at(Vx);
+                    break;
+                /*
+                 * Fx1E - ADD I, Vx
+                 * Set I = I + Vx
+                 */
+                case 0x1e:
+                    I += registers.at(Vx);
+                    registers.at(GPR_NO - 1) = (I > 0xfff);
+                    if(registers.at(GPR_NO -1)) I &= 0xfff;
+                    break;
+                /*
+                 * Fx29 - LD F, Vx
+                 * Set I = location of sprite for digit Vx
+                 */
+                case 0x29:
+                    /*
+                     * add display info here
+                     */
+                    break;
+                /*
+                 * Fx33 - LD B, Vx
+                 * Store BCD representation of Vx in memory locations
+                 * I, I+1, I+2
+                 */
+                case 0x33: {
+                    uint8_t value = registers.at(Vx);
+                    pMem->setAddr(I, (value / 100) % 10);
+                    pMem->setAddr(I + 1, (value / 10) % 10);
+                    pMem->setAddr(I + 2, value % 10);
+                } break;
+                /*
+                 * Fx55 - LD [I], Vx
+                 * Store registers V0 through Vx in memory starting at location I
+                 */
+                case 0x55: {
+                    for(int i = 0; i <= Vx; ++i) {
+                        pMem->setAddr(I + i, registers.at(i));
+                    }
+                } break;
+                /*
+                 * Fx65 - LD Vx, [I]
+                 * Read registers V0 through Vx from memory starting at location I
+                 */
+                case 0x65: {
+                    for(int i = 0; i <= Vx; ++i) {
+                        registers.at(i) = pMem->getAddr(I + i);
+                    }
+                } break;
+                default: InvalidCPUInstr(opcode);
+            }
+        }
+        default: InvalidCPUInstr(opcode);
     }
 }

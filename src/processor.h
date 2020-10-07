@@ -6,6 +6,7 @@
 #include <vector>
 #include <stack>
 #include <cstdint>
+#include <random>
 
 #define GPR_NO 16
 /*
@@ -33,6 +34,9 @@ class Processor : public Subject {
         uint8_t SP;
         std::stack<uint8_t> callStack;
         Memory* pMem;
+        std::random_device dev;
+        std::mt19937 engine;
+        std::uniform_int_distribution<uint8_t> dist;
         void executeInstruction(uint16_t opcode);
         bool compareVxkk(uint16_t opcode);
         bool compareVxVy(uint16_t opcode);
