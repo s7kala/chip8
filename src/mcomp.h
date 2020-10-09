@@ -1,7 +1,7 @@
 #ifndef MCOMP_H
 #define MCOMP_H
 
-// microcomputer to run chip8 programs
+// microcomputer VM to run chip8 programs
 
 #include "processor.h"
 #include <string>
