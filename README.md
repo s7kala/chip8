@@ -14,7 +14,7 @@ Build with CMake:
 sudo apt-get install cmake  (Ubuntu/Debian)
 cmake .
 make
-./ch8vm
+./ch8vm --help
 ```
 ## CHIP-8 Assembler and Disassembler
 ```bash
