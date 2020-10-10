@@ -1,6 +1,5 @@
 #include "subject.h"
 #include "observer.h"
-#include "link.h"
 
 void Subject::attach(Observer *obs) {
     observers.emplace_back(obs);

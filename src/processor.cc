@@ -63,6 +63,7 @@ void Processor::run(uint16_t retAddr) {
         uint16_t opcode = (pMem->getAddr(PC) << 8) + pMem->getAddr(PC + 1);
         PC += 2;
         executeInstruction(opcode);
+        notifyObservers();
     }
 }
 
@@ -71,7 +72,7 @@ uint8_t addReg(uint8_t a, uint8_t b) {
 }
 
 Info Processor::getInfo() const {
-
+    Info{};
 }
 
 /*
@@ -101,6 +102,7 @@ void Processor::executeInstruction(uint16_t opcode) {
          * Clear the display
          */
         case 0x00e0:
+            di = DisplayInstruction::Clear;
             break;
         /*
          * 00EE - RET

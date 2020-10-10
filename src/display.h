@@ -3,16 +3,12 @@
 
 #include "observer.h"
 
+enum class DisplayInstruction {Clear};
+
 class Display : public Observer {
-
-};
-
-class TextDisplay : public Display {
-
-};
-
-class GraphicsDisplay : public Display {
-
+    public:
+        virtual void view(const DisplayInstruction&) = 0;
+        ~Display() override = default;
 };
 
 #endif

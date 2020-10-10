@@ -3,6 +3,7 @@
 
 #include "memory.h"
 #include "subject.h"
+#include "display.h"
 #include <vector>
 #include <stack>
 #include <cstdint>
@@ -13,6 +14,7 @@
  * Add later (for now, call stack is environment-dependent)
 #define STACK_SIZE 16
 */
+
 class Processor : public Subject {
     public:
         explicit Processor(Memory* pMem);
@@ -37,6 +39,7 @@ class Processor : public Subject {
         std::random_device dev;
         std::mt19937 engine;
         std::uniform_int_distribution<uint8_t> dist;
+        DisplayInstruction di;
         void executeInstruction(uint16_t opcode);
         bool compareVxkk(uint16_t opcode);
         bool compareVxVy(uint16_t opcode);

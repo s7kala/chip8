@@ -30,10 +30,10 @@ int main(int argc, char** argv) {
             } else if(option == "-v" || option == "--verbose") {
 
             } else if (option == "-h" || option == "--help") {
-
+                help();
+                break;
             } else {
-                    std::cout << "Unrecognized command-line option: " << option << std::endl;
-
+                    std::cerr << "Unrecognized command-line option: " << option << std::endl;
             }
         }
         // TO-DO impl options
@@ -41,10 +41,10 @@ int main(int argc, char** argv) {
             Mcomp emulator;
             emulator.run(file);
         } catch (ProcessorException& e) {
-            std::cout << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
             return 1;
         } catch (std::exception& e) {
-            std::cout << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
         }
     }
     return rc;

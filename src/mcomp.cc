@@ -1,10 +1,11 @@
 #include "mcomp.h"
 #include "memory.h"
 #include "display.h"
+#include "textdisplay.h"
 
 #include <fstream>
 
-Mcomp::Mcomp(): RAM{new Memory(4)}, CPU(RAM), screen{nullptr} {
+Mcomp::Mcomp(): RAM{new Memory(4)}, CPU(RAM), screen{new TextDisplay} {
     CPU.attach(screen);
 }
 
