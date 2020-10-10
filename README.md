@@ -1,7 +1,10 @@
 # chip8
 A CHIP-8 interpreter and processor emulator
 
+Clone this repo:
 ```bash
+git clone https://github.com/s7kala/chip8.git
+cd chip8
 CH8_ROOT=$(pwd)
 ```
 
