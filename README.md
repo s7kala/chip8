@@ -2,7 +2,7 @@
 A CHIP-8 interpreter and processor emulator
 
 ```bash
-'CH8_ROOT=$(pwd)'
+CH8_ROOT=$(pwd)
 ```
 
 ## A VM environment to run CHIP-8 programs
