@@ -1,6 +1,6 @@
 #include "processor.h"
 #include "ch8excepts.h"
-
+#include <sstream>
 
 /*
  * TO-DO:
@@ -35,11 +35,18 @@ std::pair<int, int> getVxVy(uint16_t opcode) {
     return std::make_pair(getVx(opcode), getVx(opcode << 4));
 }
 
+std::string hex2str(int num) {
+    std::stringstream ss;
+    ss << std::hex << num;
+    return ss.str();
+}
+class myexcp{};
 /*
  * Throw exception on invalid opcode
  */
 void InvalidCPUInstr(uint16_t opcode) {
-    throw InvalidCPUInstruction("Unrecognized CPU instruction " + std::to_string(opcode));
+    throw myexcp{};
+    throw InvalidCPUInstruction("Unrecognized CPU instruction " + hex2str(opcode));
 }
 
 
@@ -236,6 +243,7 @@ void Processor::executeInstruction(uint16_t opcode) {
                 case 6:
                     registers.at(GPR_NO - 1) = (registers.at(Vx) & 0x01);
                     registers.at(Vx) >>= 1;
+                    break;
                 /*
                  * 8xy7 - SUBN Vx, Vy
                  * Set Vx = Vy - Vx, set VF = NOT borrow
@@ -243,12 +251,14 @@ void Processor::executeInstruction(uint16_t opcode) {
                 case 7:
                     registers.at(GPR_NO - 1) = (registers.at(Vy) > registers.at(Vx));
                     registers.at(Vx) = registers.at(Vy) - registers.at(Vx);
+                    break;
                 /*
                  * 8xyE - SHL Vx
                  * Set Vx = Vx << 1
                  */
                 case 14:
                     registers.at(GPR_NO - 1) = (registers.at(Vx) >> 7);
+                    break;
                 default: InvalidCPUInstr(opcode);
             }
         } break;
@@ -317,7 +327,7 @@ void Processor::executeInstruction(uint16_t opcode) {
             } else if(skip == 0xa1) {
 
             } else InvalidCPUInstr(opcode);
-        }
+        } break;
         /*
          * FxPQ - PQ Vx
          * Do operation PQ on register Vx
@@ -404,7 +414,7 @@ void Processor::executeInstruction(uint16_t opcode) {
                 } break;
                 default: InvalidCPUInstr(opcode);
             }
-        }
+        } break;
         default: InvalidCPUInstr(opcode);
     }
 }

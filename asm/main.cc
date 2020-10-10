@@ -8,6 +8,7 @@
 #include "excepts.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 void use(const char*);
 void help(const char*);
@@ -21,6 +22,11 @@ int main(int argc, char** argv) {
         rc = 1;
     } else {
         std::string file = argv[argc - 1];
+        if(file[0] == '-') {
+            if(file == "--help") help(argv[0]);
+            else use(argv[0]);
+            return rc;
+        }
         for(int i = 1; i < argc - 1; ++i) {
             std::string option(argv[i]);
             if(option == "-d" || option == "--disassemble") {
@@ -35,13 +41,18 @@ int main(int argc, char** argv) {
             }
         }
         try {
+            std::stringstream ss;
             if(assemble) {
                 Assembler asmb(verbose);
-                asmb.assemble(file, std::cout);
+                asmb.assemble(file, ss);
             }
             else {
                 Disassembler dasm(verbose);
-                dasm.disassemble(file, std::cout);
+                dasm.disassemble(file, ss);
+            }
+            std::string word;
+            while(getline(ss, word)) {
+                std::cout << word << std::endl;
             }
         } catch (AsmException& e) {
             if(e.isAsm())
@@ -66,5 +77,8 @@ void help(const char* progname) {
     std::cout << "To assemble a CHIP-8 Assembly file, simply run:\n";
     std::cout << "\t" << progname << " [filename]\n";
     std::cout << "Available options:\n";
-    std::cout << "-d or --disassemble to disassemble a CHIP-8 "
+    std::cout << "\t-d or --disassemble: disassemble a CHIP-8 binary\n";
+    std::cout << "\t-v or --verbose: Enable verbosity mode\n";
+    std::cout << "\t-h or --help: to see this message\n";
+    std::cout << "Learn more here: https://github.com/s7kala/chip8\n";
 }

@@ -16,4 +16,4 @@ ${EXEC}: ${OBJECTS}
 .PHONY: clean
 
 clean:
-	-rm -f *.o *.d
+	-rm -f *.o *.d ${EXEC}

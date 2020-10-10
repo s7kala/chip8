@@ -15,6 +15,7 @@ class Disassembler {
         void disassemble(const std::string&, std::ostream&);
     private:
         bool verbose;
+        void decodeInstruction(uint16_t, std::ostream&, int);
 };
 
 

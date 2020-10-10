@@ -8,8 +8,15 @@ void use(const char* progname) {
     std::cout << "\"" << progname << " --help\" for help\n";
 }
 
-void help() {
-
+void help(const char* progname) {
+    std::cout << progname << " is a CHIP-8 interpreter and processor emulator.\n";
+    std::cout << "It provides a virtual machine environment to run CHIP-8 programs.\n";
+    std::cout << "Available options:\n";
+    std::cout << "\t-E or --ETI660: Input program is for the ETI 660 computer\n";
+    std::cout << "\t-g or --graphics: Run in external graphics mode (default ASCII graphics on terminal)\n";
+    std::cout << "\t-v or --verbose: Enable verbosity mode\n";
+    std::cout << "\t-h or --help: Print this message\n";
+    std::cout << "Learn more here: https://github.com/s7kala/chip8\n";
 }
 
 int main(int argc, char** argv) {
@@ -19,18 +26,21 @@ int main(int argc, char** argv) {
         rc = 1;
     } else {
         std::string file = argv[argc - 1];
-        // evaluate options here
-        // ------
+        if(file[0] == '-') {
+            if(file == "--help") help(argv[0]);
+            else use(argv[0]);
+            return rc;
+        }
         for(int i = 1; i < argc - 1; ++i) {
             std::string option(argv[i]);
-            if(option == "-e" || option == "--ETI660") {
+            if(option == "-E" || option == "--ETI660") {
 
             } else if(option == "-g" || option == "--graphics") {
 
             } else if(option == "-v" || option == "--verbose") {
 
             } else if (option == "-h" || option == "--help") {
-                help();
+                help(argv[0]);
                 break;
             } else {
                     std::cerr << "Unrecognized command-line option: " << option << std::endl;
