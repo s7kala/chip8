@@ -40,13 +40,13 @@ std::string hex2str(int num) {
     ss << std::hex << num;
     return ss.str();
 }
-class myexcp{};
+
 /*
  * Throw exception on invalid opcode
  */
 void InvalidCPUInstr(uint16_t opcode) {
-    throw myexcp{};
-    throw InvalidCPUInstruction("Unrecognized CPU instruction " + hex2str(opcode));
+    std::string msg = "Unrecognized CPU instruction " + hex2str(opcode);
+    throw InvalidCPUInstruction(msg.c_str());
 }
 
 
@@ -59,27 +59,31 @@ Processor::Processor(Memory* pMem): pMem{pMem}, engine{dev()}, dist(0,255) {
     delay = sound = I = PC = SP = 0;
 }
 
+void Processor::init(uint16_t retAddr) {
+    if(!callStack.empty()) {
+        throw ProcessorException("Processor already running\n");
+    }
+    callStack.push(retAddr);
+    SP = callStack.top();
+}
+
 void Processor::jump(uint16_t addr) {
     PC = addr;
 }
 
-void Processor::run(uint16_t retAddr) {
-    callStack.push(retAddr);
-    SP = callStack.top();
-    while(!callStack.empty()) {
+bool Processor::run() {
+    int state = true;
+    if(!callStack.empty()) {
         uint16_t opcode = (pMem->getAddr(PC) << 8) + pMem->getAddr(PC + 1);
         PC += 2;
         executeInstruction(opcode);
         notifyObservers();
-    }
-}
-
-uint8_t addReg(uint8_t a, uint8_t b) {
-
+    } else state = false;
+    return state;
 }
 
 Info Processor::getInfo() const {
-    Info{};
+    return displayInstruction;
 }
 
 /*
@@ -109,7 +113,7 @@ void Processor::executeInstruction(uint16_t opcode) {
          * Clear the display
          */
         case 0x00e0:
-            di = DisplayInstruction::Clear;
+            displayInstruction = Info{};
             break;
         /*
          * 00EE - RET
@@ -305,9 +309,7 @@ void Processor::executeInstruction(uint16_t opcode) {
             uint8_t n = (opcode & 0x000f);
             uint8_t sprite[n];
             pMem->getAddrv(I, sprite, n);
-            /*
-             * Add display stuff here
-             */
+            displayInstruction.sprite.assign(sprite, sprite + n);
         } break;
         /*
          * Ex9E - SKP Vx

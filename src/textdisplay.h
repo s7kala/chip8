@@ -10,9 +10,10 @@ class TextDisplay : public Display {
     public:
         TextDisplay();
         void notify(const Subject&) override;
-        void view(const DisplayInstruction&) override;
+        void view() override;
     private:
         std::vector<std::vector<char>> screen;
+        void clearScreen();
 };
 
 #endif

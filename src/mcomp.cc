@@ -12,8 +12,10 @@ Mcomp::Mcomp(): RAM{new Memory(4)}, CPU(RAM), screen{new TextDisplay} {
 
 void Mcomp::run(const std::string &path, uint16_t addr) {
     uint16_t retAddr = load(path, addr);
+    CPU.init(retAddr);
     CPU.jump(addr);
-    CPU.run(retAddr);
+    while(CPU.run())
+        screen->view();
 }
 
 uint16_t Mcomp::load(const std::string &path, uint16_t addr) {

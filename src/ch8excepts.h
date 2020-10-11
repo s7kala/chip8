@@ -2,20 +2,21 @@
 #define CH8EXCEPTS_H
 
 #include <exception>
+#include <stdexcept>
 #include <string>
 
 class ProcessorException : public std::exception {
     public:
-        explicit ProcessorException(std::string msg): message{std::move(msg)} {}
-        std::string& what() { return message; }
+        explicit ProcessorException(const char* msg) : m{msg} {}
+        const char* what() const noexcept override { return m.what(); }
         ~ProcessorException() override = default;
     protected:
-        std::string message;
+        std::runtime_error m;
 };
 
 class InvalidCPUInstruction : public ProcessorException {
     public:
-        explicit InvalidCPUInstruction(const std::string& msg): ProcessorException(msg) {}
+        explicit InvalidCPUInstruction(const char* msg): ProcessorException(msg) {}
 };
 
 

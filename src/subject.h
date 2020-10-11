@@ -2,11 +2,12 @@
 #define SUBJECT_H
 
 #include <vector>
+#include <cstdint>
 
 class Observer;
 struct Info {
-    int row, col;
-
+    std::vector<uint8_t> sprite;
+    uint8_t Vx, Vy;
 };
 
 class Subject {

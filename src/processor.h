@@ -19,13 +19,19 @@ class Processor : public Subject {
     public:
         explicit Processor(Memory* pMem);
         /*
+         * Init proc (push retAddr to callStack)
+         */
+        void init(uint16_t retAddr);
+        /*
          * Set PC to addr
          */
         void jump(uint16_t addr);
         /*
          * Fetch and execute opcodes
+         * Returns true for a successful run of the emulation cycle,
+         * false otherwise
          */
-        void run(uint16_t retAddr);
+        bool run();
         Info getInfo() const override;
     private:
         std::vector<uint8_t> registers;
@@ -39,7 +45,7 @@ class Processor : public Subject {
         std::random_device dev;
         std::mt19937 engine;
         std::uniform_int_distribution<uint8_t> dist;
-        DisplayInstruction di;
+        Info displayInstruction;
         void executeInstruction(uint16_t opcode);
         bool compareVxkk(uint16_t opcode);
         bool compareVxVy(uint16_t opcode);
