@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
             // step through each instance of fetch-execute cycle
             char ch;
             emulator.boot(file);
-            while(std::cin.get(ch) && emulator.emulate(file)) {
+            while(emulator.emulate(file) && std::cin.get(ch)) {
             }
 #else
             emulator.run(file);

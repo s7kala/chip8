@@ -1,6 +1,9 @@
 #include "processor.h"
 #include "ch8excepts.h"
 #include <sstream>
+#ifdef DEBUG
+#include "../asm/dasm.h"
+#endif
 
 /*
  * TO-DO:
@@ -74,6 +77,7 @@ void Processor::jump(uint16_t addr) {
 bool Processor::run() {
     int state = true;
 #ifdef DEBUG
+    Disassembler dasm;
     std::cout << "Running a CPU cycle...\nRegisters:\n";
     for(char i = 0; i < 16; ++i) {
         char reg = i + '0';
@@ -83,10 +87,16 @@ bool Processor::run() {
     std::cout << "PC = 0x" << std::hex << int(PC) << '\n';
     std::cout << "I = 0x" << std::hex << int(I) << '\n';
 #endif
+    static int instrNo = 0;
     if(!callStack.empty()) {
         uint16_t opcode = (pMem->getAddr(PC) << 8) + pMem->getAddr(PC + 1);
+#ifdef DEBUG
+        std::cout << "NEXT INSTRUCTION: ";
+        dasm.decodeInstruction(opcode, std::cout, instrNo);
+#endif
         PC += 2;
         executeInstruction(opcode);
+        instrNo++;
     } else state = false;
     return state;
 }

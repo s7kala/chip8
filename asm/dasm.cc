@@ -5,7 +5,7 @@
 
 Disassembler::Disassembler(bool verbose): verbose{verbose} {}
 
-std::string hex2str(int num) {
+std::string hex2string(int num) {
     std::stringstream ss;
     ss << std::hex << num;
     return ss.str();
@@ -27,15 +27,15 @@ void Disassembler::disassemble(const std::string& file, std::ostream& os) {
     }
 }
 
-void InvalidCPUInstr(uint16_t opcode) {
-    throw AsmException("Invalid CPU Instruction: " + hex2str(opcode), false);
+void InvalidCPUInstruct(uint16_t opcode) {
+    throw AsmException("Invalid CPU Instruction: " + hex2string(opcode), false);
 }
 
 void Disassembler::decodeInstruction(uint16_t opcode, std::ostream& os, int instrNo) {
-    std::string b0(hex2str(opcode & 0x000f));
-    std::string b1(hex2str((opcode & 0x00f0) >> 4));
-    std::string b2(hex2str((opcode & 0x0f00) >> 8));
-    std::string b3(hex2str((opcode & 0xf000) >> 12));
+    std::string b0(hex2string(opcode & 0x000f));
+    std::string b1(hex2string((opcode & 0x00f0) >> 4));
+    std::string b2(hex2string((opcode & 0x0f00) >> 8));
+    std::string b3(hex2string((opcode & 0xf000) >> 12));
     if(instrNo % 4 == 0) {
         os << "0x" << 200 + instrNo*2 << ": ";
     }
@@ -89,7 +89,7 @@ void Disassembler::decodeInstruction(uint16_t opcode, std::ostream& os, int inst
          */
         case 0x5000 ... 0x5fff:
             if(opcode & 0x000f)
-                InvalidCPUInstr(opcode);
+                InvalidCPUInstruct(opcode);
             os << "SE\tV" << b2 << ",\tV" << b1 << "\t";
             break;
         /*
@@ -176,7 +176,7 @@ void Disassembler::decodeInstruction(uint16_t opcode, std::ostream& os, int inst
                 case 14:
                     os << "SHL\tV" << b2 << "\t\t";
                     break;
-                default: InvalidCPUInstr(opcode);
+                default: InvalidCPUInstruct(opcode);
             }
         } break;
         /*
@@ -185,7 +185,7 @@ void Disassembler::decodeInstruction(uint16_t opcode, std::ostream& os, int inst
          */
         case 0x9000 ... 0x9fff: {
             if (opcode & 0x000f)
-                InvalidCPUInstr(opcode);
+                InvalidCPUInstruct(opcode);
             os << "SNE\tV" << b2 << ",\tV" << b1 << '\t';
         } break;
         /*
@@ -229,7 +229,7 @@ void Disassembler::decodeInstruction(uint16_t opcode, std::ostream& os, int inst
                 os << "SKP";
             } else if(skip == 0xa1) {
                 os << "SKNP";
-            } else InvalidCPUInstr(opcode);
+            } else InvalidCPUInstruct(opcode);
             os << "\tV" << b2 << "\t\t";
         } break;
         /*
@@ -304,10 +304,10 @@ void Disassembler::decodeInstruction(uint16_t opcode, std::ostream& os, int inst
                 case 0x65:
                     os << "LD\tV" << b2 << ",\t" << "[I]" << '\t';
                     break;
-                default: InvalidCPUInstr(opcode);
+                default: InvalidCPUInstruct(opcode);
             }
         } break;
-        default: InvalidCPUInstr(opcode);
+        default: InvalidCPUInstruct(opcode);
     }
     os << "\t; " << b3 << b2 << b1 << b0 << '\n';
 }
