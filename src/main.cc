@@ -51,11 +51,12 @@ int main(int argc, char** argv) {
         try {
             Mcomp emulator;
 #ifdef DEBUG
+            std::cout << "============= DEBUG MODE =============\n";
+            std::cout << "Press enter to step through the program.\n";
             // step through each instance of fetch-execute cycle
             char ch;
             emulator.boot(file);
-            while(emulator.emulate(file) && std::cin.get(ch)) {
-            }
+            while(emulator.emulate(file) && std::cin.get(ch));
 #else
             emulator.run(file);
 #endif
