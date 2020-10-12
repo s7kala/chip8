@@ -4,8 +4,8 @@
 
 #include <fstream>
 #include <stdexcept>
-#include <chrono>
-#include <thread>
+//#include <chrono>
+//#include <thread>
 
 Mcomp::Mcomp(): RAM{new Memory(4)}, CPU(RAM), screen{new TextDisplay} {
     CPU.attach(screen);
@@ -14,13 +14,24 @@ Mcomp::Mcomp(): RAM{new Memory(4)}, CPU(RAM), screen{new TextDisplay} {
 }
 
 void Mcomp::run(const std::string &path, uint16_t addr) {
+    boot(path, addr);
+    while(CPU.run()) {
+        // temp fix for text display
+     //   std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+}
+
+bool Mcomp::emulate(const std::string &path, uint16_t addr) {
+    return CPU.run();
+}
+
+void Mcomp::boot(const std::string &path, uint16_t addr) {
+#ifdef DEBUG
+    std::cout << "Booting program " << path << " into memory at 0x" << std::hex << addr << '\n';
+#endif
     uint16_t retAddr = load(path, addr);
     CPU.init(retAddr);
     CPU.jump(addr);
-    while(CPU.run()) {
-        // temp fix for text display
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
 }
 
 uint16_t Mcomp::load(const std::string &path, uint16_t addr) {

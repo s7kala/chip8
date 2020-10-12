@@ -21,6 +21,14 @@ class Mcomp {
          * Load and then jump to that addr
          */
         void run(const std::string& path, uint16_t addr = BASE_ADDR);
+        /*
+         * Emulate one instruction
+         */
+        bool emulate(const std::string& path, uint16_t addr = BASE_ADDR);
+        /*
+         * Boot up a program
+         */
+        void boot(const std::string& path, uint16_t addr = BASE_ADDR);
         ~Mcomp();
     private:
         Memory* RAM;

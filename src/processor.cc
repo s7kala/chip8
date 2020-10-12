@@ -73,6 +73,16 @@ void Processor::jump(uint16_t addr) {
 
 bool Processor::run() {
     int state = true;
+#ifdef DEBUG
+    std::cout << "Running a CPU cycle...\nRegisters:\n";
+    for(char i = 0; i < 16; ++i) {
+        char reg = i + '0';
+        if(i > 9) reg += 7;
+        std::cout << "V" << reg << ": 0x" << std::hex << int(registers.at(int(i))) << '\n';
+    }
+    std::cout << "PC = 0x" << std::hex << int(PC) << '\n';
+    std::cout << "I = 0x" << std::hex << int(I) << '\n';
+#endif
     if(!callStack.empty()) {
         uint16_t opcode = (pMem->getAddr(PC) << 8) + pMem->getAddr(PC + 1);
         PC += 2;

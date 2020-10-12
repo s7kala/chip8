@@ -9,6 +9,7 @@ void use(const char* progname) {
 }
 
 void help(const char* progname) {
+    std::cout << progname << " " << "[options] [filename]\n";
     std::cout << progname << " is a CHIP-8 interpreter and processor emulator.\n";
     std::cout << "It provides a virtual machine environment to run CHIP-8 programs.\n";
     std::cout << "Available options:\n";
@@ -49,7 +50,15 @@ int main(int argc, char** argv) {
         // TO-DO impl options
         try {
             Mcomp emulator;
+#ifdef DEBUG
+            // step through each instance of fetch-execute cycle
+            char ch;
+            emulator.boot(file);
+            while(std::cin.get(ch) && emulator.emulate(file)) {
+            }
+#else
             emulator.run(file);
+#endif
         } catch (ProcessorException& e) {
             std::cerr << e.what() << std::endl;
             return 1;
