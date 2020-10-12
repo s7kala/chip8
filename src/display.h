@@ -2,6 +2,7 @@
 #define DISPLAY_H
 
 #include "observer.h"
+#include <iostream>
 
 enum class DisplayInstruction {Clear};
 

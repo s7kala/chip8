@@ -5,7 +5,7 @@
 
 class Observer {
 public:
-    virtual void notify(const Subject &) = 0;
+    virtual bool notify(const Subject &) = 0;
     virtual ~Observer() = default;
 };
 

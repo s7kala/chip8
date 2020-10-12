@@ -5,8 +5,11 @@ void Subject::attach(Observer *obs) {
     observers.emplace_back(obs);
 }
 
-void Subject::notifyObservers() {
+bool Subject::notifyObservers() {
+    bool VF = false;
     for(auto &obs: observers) {
-        obs->notify(*this);
+        if(obs->notify(*this))
+            VF = true;
     }
+    return VF;
 }

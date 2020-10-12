@@ -3,16 +3,17 @@
 
 #include "display.h"
 
-#define HEIGHT 64
-#define WIDTH 32
+#define HEIGHT 32
+#define WIDTH 64
 
 class TextDisplay : public Display {
     public:
-        TextDisplay();
-        void notify(const Subject&) override;
+        explicit TextDisplay(std::ostream& out = std::cout);
+        bool notify(const Subject&) override;
         void view() override;
     private:
-        std::vector<std::vector<char>> screen;
+        std::vector<std::vector<unsigned char>> screen;
+        std::ostream& os;
         void clearScreen();
 };
 

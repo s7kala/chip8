@@ -31,7 +31,7 @@ uint8_t Memory::getAddr(unsigned int addr) const {
     return MEM[addr];
 }
 
-uint8_t * Memory::getAddrv(unsigned int addr, uint8_t * arv, int n) const {
+uint8_t* Memory::getAddrv(unsigned int addr, uint8_t* arv, int n) const {
     rangeCheck(addr, size);
     for(int i = 0; i < n && addr + i < size; ++i) {
         arv[i] = MEM[addr + i];

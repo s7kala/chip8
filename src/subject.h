@@ -14,7 +14,7 @@ class Subject {
     std::vector<Observer*> observers;
 public:
     void attach(Observer*);
-    void notifyObservers();
+    bool notifyObservers();
     virtual Info getInfo() const = 0;
     virtual ~Subject() = default;
 };

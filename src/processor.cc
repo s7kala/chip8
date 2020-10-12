@@ -77,7 +77,6 @@ bool Processor::run() {
         uint16_t opcode = (pMem->getAddr(PC) << 8) + pMem->getAddr(PC + 1);
         PC += 2;
         executeInstruction(opcode);
-        notifyObservers();
     } else state = false;
     return state;
 }
@@ -114,6 +113,8 @@ void Processor::executeInstruction(uint16_t opcode) {
          */
         case 0x00e0:
             displayInstruction = Info{};
+            if(notifyObservers()) registers.at(GPR_NO - 1) = 1;
+            else registers.at(GPR_NO - 1) = 0;
             break;
         /*
          * 00EE - RET
@@ -310,6 +311,11 @@ void Processor::executeInstruction(uint16_t opcode) {
             uint8_t sprite[n];
             pMem->getAddrv(I, sprite, n);
             displayInstruction.sprite.assign(sprite, sprite + n);
+            auto VxVy = getVxVy(opcode);
+            displayInstruction.Vx = registers.at(VxVy.first);
+            displayInstruction.Vy = registers.at(VxVy.second);
+            if(notifyObservers()) registers.at(GPR_NO - 1) = 1;
+            else registers.at(GPR_NO - 1) = 0;
         } break;
         /*
          * Ex9E - SKP Vx
