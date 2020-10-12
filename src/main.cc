@@ -52,7 +52,9 @@ int main(int argc, char** argv) {
             Mcomp emulator;
 #ifdef DEBUG
             std::cout << "============= DEBUG MODE =============\n";
+            std::cout << "WARNING! Debug mode is a lot slower and uses more memory than normal mode!\n";
             std::cout << "Press enter to step through the program.\n";
+            std::cout << "======================================\n";
             // step through each instance of fetch-execute cycle
             char ch;
             emulator.boot(file);

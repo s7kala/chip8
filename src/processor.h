@@ -33,14 +33,14 @@ class Processor : public Subject {
          */
         bool run();
         Info getInfo() const override;
+        ~Processor() noexcept override;
     private:
         std::vector<uint8_t> registers;
         uint8_t delay;
         uint8_t sound;
         uint16_t I;
         uint16_t PC;
-        uint8_t SP;
-        std::stack<uint8_t> callStack;
+        std::stack<uint16_t> callStack;
         Memory* pMem;
         std::random_device dev;
         std::mt19937 engine;

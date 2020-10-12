@@ -1,6 +1,7 @@
 #include "processor.h"
 #include "ch8excepts.h"
 #include <sstream>
+#include <curses.h>
 #ifdef DEBUG
 #include "../asm/dasm.h"
 #endif
@@ -59,15 +60,16 @@ void InvalidCPUInstr(uint16_t opcode) {
 Processor::Processor(Memory* pMem): pMem{pMem}, engine{dev()}, dist(0,255) {
     for(int i = 0; i < GPR_NO; ++i)
         registers.emplace_back(0);
-    delay = sound = I = PC = SP = 0;
+    delay = sound = I = PC = 0;
 }
+
+Processor::~Processor() noexcept = default;
 
 void Processor::init(uint16_t retAddr) {
     if(!callStack.empty()) {
         throw ProcessorException("Processor already running\n");
     }
     callStack.push(retAddr);
-    SP = callStack.top();
 }
 
 void Processor::jump(uint16_t addr) {
@@ -78,7 +80,7 @@ bool Processor::run() {
     int state = true;
 #ifdef DEBUG
     Disassembler dasm;
-    std::cout << "Running a CPU cycle...\nRegisters:\n";
+    std::cout << "Registers:\n";
     for(char i = 0; i < 16; ++i) {
         char reg = i + '0';
         if(i > 9) reg += 7;
@@ -86,13 +88,15 @@ bool Processor::run() {
     }
     std::cout << "PC = 0x" << std::hex << int(PC) << '\n';
     std::cout << "I = 0x" << std::hex << int(I) << '\n';
+    std::cout << "Stack top = 0x" << std::hex << int(callStack.top()) << '\n';
 #endif
     static int instrNo = 0;
     if(!callStack.empty()) {
         uint16_t opcode = (pMem->getAddr(PC) << 8) + pMem->getAddr(PC + 1);
 #ifdef DEBUG
-        std::cout << "NEXT INSTRUCTION: ";
+        std::cout << "EXECUTING INSTRUCTION: ";
         dasm.decodeInstruction(opcode, std::cout, instrNo);
+        std::cout << "Running a CPU cycle...\n";
 #endif
         PC += 2;
         executeInstruction(opcode);
@@ -143,10 +147,6 @@ void Processor::executeInstruction(uint16_t opcode) {
         case 0x00ee:
             PC = callStack.top();
             callStack.pop();
-            if(callStack.empty())
-                // potential hazard for subsequent run calls/SMP scaling
-                SP = 0;
-            else SP = callStack.top();
             break;
         /*
          * 1nnn - JP addr
@@ -161,7 +161,6 @@ void Processor::executeInstruction(uint16_t opcode) {
          */
         case 0x2000 ... 0x2fff:
             callStack.push(PC);
-            SP = callStack.top();
             PC = opcode & 0x0fff;
             break;
         /*
@@ -407,9 +406,8 @@ void Processor::executeInstruction(uint16_t opcode) {
                  * Set I = location of sprite for digit Vx
                  */
                 case 0x29:
-                    /*
-                     * add display info here
-                     */
+                    // sprites start at 0x50 in interpreter
+                    I = 0x50 + int(registers.at(Vx)) * 5;
                     break;
                 /*
                  * Fx33 - LD B, Vx

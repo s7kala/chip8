@@ -10,7 +10,7 @@ class Memory {
         // Write value to MEM[addr]
         void setAddr(unsigned int addr, uint8_t value);
         /*
-         * Write to mem with uint8_t* of size n
+         * Write to mem with uint8_t[] of size n
          * If n exceeds MEM size, the write is done for as long
          * as possible
          */

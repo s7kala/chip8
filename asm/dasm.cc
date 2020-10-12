@@ -36,9 +36,7 @@ void Disassembler::decodeInstruction(uint16_t opcode, std::ostream& os, int inst
     std::string b1(hex2string((opcode & 0x00f0) >> 4));
     std::string b2(hex2string((opcode & 0x0f00) >> 8));
     std::string b3(hex2string((opcode & 0xf000) >> 12));
-    if(instrNo % 4 == 0) {
-        os << "0x" << 200 + instrNo*2 << ": ";
-    }
+    os << "0x" << std::hex << (200 + instrNo*2) << ": ";
     os << "\t";
     switch (opcode) {
         /*
