@@ -1,14 +1,17 @@
 #include "mcomp.h"
 #include "memory.h"
 #include "textdisplay.h"
+#include "graphicsdisplay.h"
 
 #include <fstream>
 #include <stdexcept>
-//#include <chrono>
-//#include <thread>
+#include <chrono>
+#include <thread>
 
 
-Mcomp::Mcomp(): RAM{new Memory(4)}, CPU(RAM), screen{new TextDisplay} {
+Mcomp::Mcomp(bool graphics): RAM{new Memory(4)}, CPU(RAM), graphics{graphics} {
+    if(graphics) screen = new GraphicsDisplay;
+    else screen = new TextDisplay;
     CPU.attach(screen);
     // add sprites in interpreter memory (0x000 to 0x1ff)
     //
@@ -37,7 +40,7 @@ void Mcomp::run(const std::string &path, uint16_t addr) {
     boot(path, addr);
     while(CPU.run()) {
         // temp fix for text display
-     //   std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    //    std::this_thread::sleep_for(std::chrono::milliseconds(4));
     }
 }
 
@@ -50,7 +53,9 @@ void Mcomp::boot(const std::string &path, uint16_t addr) {
     std::cout << "Booting program " << path << " into memory at 0x" << std::hex << addr << '\n';
 #endif
     uint16_t retAddr = load(path, addr);
+#ifdef DEBUG
     std::cout << "Return address is 0x" << std::hex << int(retAddr) << '\n';
+#endif
     CPU.init(retAddr);
     CPU.jump(addr);
 }
@@ -68,4 +73,5 @@ uint16_t Mcomp::load(const std::string &path, uint16_t addr) {
 
 Mcomp::~Mcomp() {
     delete RAM;
+    delete screen;
 }

@@ -4,7 +4,8 @@
 #include "observer.h"
 #include <iostream>
 
-enum class DisplayInstruction {Clear};
+#define REG_SIZE 8
+
 
 class Display : public Observer {
     public:

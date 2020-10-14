@@ -3,7 +3,7 @@
 
 #include "memory.h"
 #include "subject.h"
-#include "display.h"
+//#include "display.h"
 #include <vector>
 #include <stack>
 #include <cstdint>

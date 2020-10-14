@@ -101,6 +101,9 @@ bool Processor::run() {
         PC += 2;
         executeInstruction(opcode);
         instrNo++;
+        if(delay > 0) --delay;
+        if(sound > 0) --sound;
+
     } else state = false;
     return state;
 }

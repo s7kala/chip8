@@ -16,7 +16,7 @@ class Memory;
 class Display;
 class Mcomp {
     public:
-        Mcomp();
+        explicit Mcomp(bool graphics=false);
         /*
          * Load and then jump to that addr
          */
@@ -34,6 +34,7 @@ class Mcomp {
         Memory* RAM;
         Processor CPU;
         Display* screen;
+        bool graphics;
         /*
          * Load a program with filepath "path" into memory at
          * starting address "addr", returns end addr

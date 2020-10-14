@@ -22,6 +22,7 @@ void help(const char* progname) {
 
 int main(int argc, char** argv) {
     int rc = 0;
+    bool graphics = false;
     if(argc < 2) {
         use(argv[0]);
         rc = 1;
@@ -37,7 +38,7 @@ int main(int argc, char** argv) {
             if(option == "-E" || option == "--ETI660") {
 
             } else if(option == "-g" || option == "--graphics") {
-
+                graphics = true;
             } else if(option == "-v" || option == "--verbose") {
 
             } else if (option == "-h" || option == "--help") {
@@ -49,7 +50,7 @@ int main(int argc, char** argv) {
         }
         // TO-DO impl options
         try {
-            Mcomp emulator;
+            Mcomp emulator(graphics);
 #ifdef DEBUG
             std::cout << "============= DEBUG MODE =============\n";
             std::cout << "WARNING! Debug mode is a lot slower and uses more memory than normal mode!\n";

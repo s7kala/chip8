@@ -1,7 +1,5 @@
 #include "textdisplay.h"
 
-#define REG_SIZE 8
-
 TextDisplay::TextDisplay(std::ostream& os): os{os} {
     for(int i = 0; i < HEIGHT; ++i) {
         std::vector<unsigned char> row;
