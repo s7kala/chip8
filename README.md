@@ -1,4 +1,5 @@
 # chip8
+<In progress!>
 A CHIP-8 interpreter and processor emulator
 
 Clone this repo:
