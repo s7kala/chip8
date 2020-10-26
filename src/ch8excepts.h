@@ -19,6 +19,14 @@ class InvalidCPUInstruction : public ProcessorException {
         explicit InvalidCPUInstruction(const char* msg): ProcessorException(msg) {}
 };
 
+class DisplayException : public std::exception {
+    public:
+        explicit DisplayException(const char* msg) : m{msg} {}
+        const char* what() const noexcept override { return m.what(); }
+        ~DisplayException() override = default;
+    protected:
+        std::runtime_error m;
+};
 
 
 #endif

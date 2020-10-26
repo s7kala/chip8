@@ -4,7 +4,7 @@
 #include "display.h"
 #include <SFML/Graphics.hpp>
 
-#define SCALE_FACTOR 10
+#define SCALE_FACTOR 20
 
 class GraphicsDisplay : public Display {
     public:

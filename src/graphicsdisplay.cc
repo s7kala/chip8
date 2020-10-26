@@ -1,4 +1,5 @@
 #include "graphicsdisplay.h"
+#include "ch8excepts.h"
 
 GraphicsDisplay::GraphicsDisplay():
     window{sf::VideoMode(WIDTH * SCALE_FACTOR, HEIGHT * SCALE_FACTOR), "CHIP-8 Emulator"} {}
@@ -12,6 +13,14 @@ void GraphicsDisplay::clearScreen() {
 }
 
 void GraphicsDisplay::view() {
+    if(!window.isOpen()) throw DisplayException("Display window closed");
+    sf::Event event;
+    while(window.pollEvent(event)) {
+        if(event.type == sf::Event::Closed) {
+            window.close();
+            throw DisplayException("Closed display window");
+        }
+    }
     int i = 0;
     for(auto const &row : screen) {
         int j = 0;

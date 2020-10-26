@@ -72,6 +72,9 @@ int main(int argc, char** argv) {
         } catch (ProcessorException& e) {
             std::cerr << e.what() << std::endl;
             return 1;
+        } catch (DisplayException& e) {
+            std::cerr << e.what() << std::endl;
+            return 0;
         } catch (std::exception& e) {
             std::cerr << e.what() << std::endl;
         }
