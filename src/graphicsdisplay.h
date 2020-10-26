@@ -4,8 +4,7 @@
 #include "display.h"
 #include <SFML/Graphics.hpp>
 
-#define GFX_WIDTH 640
-#define GFX_HEIGHT 320
+#define SCALE_FACTOR 10
 
 class GraphicsDisplay : public Display {
     public:

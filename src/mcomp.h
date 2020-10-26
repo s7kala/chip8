@@ -5,6 +5,7 @@
 
 #include "processor.h"
 #include <string>
+#include <SFML/System.hpp>
 
 #ifdef ETI660
 #define BASE_ADDR 0x600
@@ -36,6 +37,7 @@ class Mcomp {
         Keyboard* kb;
         Processor CPU;
         Display* screen;
+        sf::Clock timer;
         bool graphics;
         /*
          * Load a program with filepath "path" into memory at

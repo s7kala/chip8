@@ -12,27 +12,7 @@ bool TextDisplay::notify(const Subject& whoFrom) {
          */
         clearScreen();
     } else {
-        /*
-         * DRW Vx, Vy, nibble
-         * Display n-byte sprite at (Vx, Vy), set VF = collision
-         */
-        int n = info.sprite.size();
-        for(int i = info.Vy; i < info.Vy + n; ++i) {
-            uint8_t row = info.sprite.at(i - info.Vy);
-            int ctr = 7;
-            for(int j = info.Vx; j < info.Vx + REG_SIZE; ++j) {
-                if((row >> ctr--) & 0x01) {
-                    int maxHeight = HEIGHT - 1, maxWidth = WIDTH - 1;
-                    int x = j & maxWidth, y = i & maxHeight;
-                    if(screen.at(y).at(x) == 1) {
-                        screen.at(y).at(x) = 0;
-                        collision = true;
-                    } else {
-                        screen.at(y).at(x) ^= 1;
-                    }
-                }
-            }
-        }
+        collision = Display::draw(info);
     }
     view();
     return collision;

@@ -2,6 +2,7 @@
 #define DISPLAY_H
 
 #include "observer.h"
+#include "subject.h"
 #include <iostream>
 
 #define REG_SIZE 8
@@ -15,6 +16,7 @@ class Display : public Observer {
         ~Display() override = default;
     protected:
         std::vector<std::vector<unsigned char>> screen;
+        bool draw(const Info&, int height = HEIGHT, int width = WIDTH);
 };
 
 #endif

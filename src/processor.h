@@ -9,6 +9,9 @@
 #include <cstdint>
 #include <random>
 
+#include <SFML/Audio.hpp>
+#include <SFML/System.hpp>
+
 #define GPR_NO 16
 /*
  * Add later (for now, call stack is environment-dependent)
@@ -38,6 +41,11 @@ class Processor : public Subject {
         std::vector<uint8_t> registers;
         uint8_t delay;
         uint8_t sound;
+        sf::Time delayTimer;
+        sf::Time soundTimer;
+        sf::Clock clock;
+        sf::SoundBuffer src;
+        sf::Sound beep;
         uint16_t I;
         uint16_t PC;
         std::stack<uint16_t> callStack;

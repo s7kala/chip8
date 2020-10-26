@@ -10,7 +10,7 @@
 #include <thread>
 
 
-Mcomp::Mcomp(bool graphics): RAM{new Memory(4)}, kb{new Keyboard}, CPU(RAM, kb), graphics{graphics} {
+Mcomp::Mcomp(bool graphics): RAM{new Memory(4)}, kb{new Keyboard}, CPU(RAM, kb), graphics{graphics}, timer{sf::Clock{}} {
     if(graphics) {
         auto disp = new GraphicsDisplay;
         kb->attach(&disp->window);
@@ -43,9 +43,14 @@ Mcomp::Mcomp(bool graphics): RAM{new Memory(4)}, kb{new Keyboard}, CPU(RAM, kb),
 
 void Mcomp::run(const std::string &path, uint16_t addr) {
     boot(path, addr);
-    while(CPU.run()) {
+    auto time = timer.getElapsedTime();
+    while(true) {
+        if(timer.getElapsedTime() - time >= sf::milliseconds(1)) {
+            if(!CPU.run()) break;
+            time = timer.getElapsedTime();
+        }
         // temp fix for text display
-       std::this_thread::sleep_for(std::chrono::microseconds(500));
+         //std::this_thread::sleep_for(std::chrono::microseconds(1000));
     }
 }
 

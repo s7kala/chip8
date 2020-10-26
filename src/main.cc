@@ -3,18 +3,20 @@
 #include <vector>
 #include "ch8excepts.h"
 
-void use(const char* progname) {
-    std::cout << progname << " " << "[options] [filename]\n";
-    std::cout << "\"" << progname << " --help\" for help\n";
+#define PROGNAME "ch8vm"
+
+void use() {
+    std::cout << PROGNAME << " " << "[options] [filename]\n";
+    std::cout << "\"" << PROGNAME << " --help\" for help\n";
 }
 
-void help(const char* progname) {
-    std::cout << progname << " " << "[options] [filename]\n";
-    std::cout << progname << " is a CHIP-8 interpreter and processor emulator.\n";
+void help() {
+    std::cout << PROGNAME << " " << "[options] [filename]\n";
+    std::cout << PROGNAME << " is a CHIP-8 interpreter and processor emulator.\n";
     std::cout << "It provides a virtual machine environment to run CHIP-8 programs.\n";
     std::cout << "Available options:\n";
     std::cout << "\t-E or --ETI660: Input program is for the ETI 660 computer\n";
-    std::cout << "\t-a or --text: Run in ASCII graphics mode (deprecated, default SFML graphics)\n";
+    std::cout << "\t-a or --text: Run in ASCII graphics mode for debugging (deprecated, default SFML graphics)\n";
     std::cout << "\t-v or --verbose: Enable verbosity mode\n";
     std::cout << "\t-h or --help: Print this message\n";
     std::cout << "Learn more here: https://github.com/s7kala/chip8\n";
@@ -24,13 +26,13 @@ int main(int argc, char** argv) {
     int rc = 0;
     bool graphics = true;
     if(argc < 2) {
-        use(argv[0]);
+        use();
         rc = 1;
     } else {
         std::string file = argv[argc - 1];
         if(file[0] == '-') {
-            if(file == "--help") help(argv[0]);
-            else use(argv[0]);
+            if(file == "--help") help();
+            else use();
             return rc;
         }
         for(int i = 1; i < argc - 1; ++i) {
@@ -42,7 +44,7 @@ int main(int argc, char** argv) {
             } else if(option == "-v" || option == "--verbose") {
 
             } else if (option == "-h" || option == "--help") {
-                help(argv[0]);
+                help();
                 break;
             } else {
                     std::cerr << "Unrecognized command-line option: " << option << std::endl;

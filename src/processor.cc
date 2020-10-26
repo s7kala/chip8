@@ -10,7 +10,7 @@
 /* ***************************** METHOD ABSTRACTIONS ********************************* */
 
 
-/* ********** COMMON FUNCTIONS AND HELPERS ************* */
+/* ********** COMMON FUNCTIONS AND HELPERS ********** */
 
 /*
  * Return index of register Vx from opcode LxMN
@@ -53,10 +53,15 @@ void InvalidCPUInstr(uint16_t opcode) {
 
 /* ********************************* METHODS *************************************** */
 
-Processor::Processor(Memory* pMem, Keyboard* pkb): pMem{pMem}, pkb{pkb}, engine{dev()}, dist(0,255) {
+Processor::Processor(Memory* pMem, Keyboard* pkb): pMem{pMem}, pkb{pkb}, engine{dev()}, dist(0,255), clock{sf::Clock{}},
+        src{sf::SoundBuffer{}}, beep{sf::Sound{}} {
     for(int i = 0; i < GPR_NO; ++i)
         registers.emplace_back(0);
     delay = sound = I = PC = 0;
+    delayTimer = sf::seconds(0);
+    soundTimer = sf::seconds(0);
+    src.loadFromFile("../../audio/chip8-beep.wav");
+    beep.setBuffer(src);
 }
 
 Processor::~Processor() noexcept = default;
@@ -96,9 +101,30 @@ bool Processor::run() {
 #endif
         PC += 2;
         executeInstruction(opcode);
+        if(delay > 0) {
+            if(delayTimer == sf::seconds(0)) {
+                delayTimer = clock.getElapsedTime();
+            }
+           if(clock.getElapsedTime() - delayTimer >= sf::milliseconds(1)) {
+               --delay;
+               delayTimer = clock.getElapsedTime();
+           }
+        } else if(delay == 0 && delayTimer != sf::seconds(0)) {
+            delayTimer = sf::seconds(0);
+        }
+        if(sound > 0) {
+            beep.play();
+            if(soundTimer == sf::seconds(0)) {
+                soundTimer = clock.getElapsedTime();
+            }
+            if(clock.getElapsedTime() - soundTimer >= sf::milliseconds(1)) {
+                --sound;
+                soundTimer = clock.getElapsedTime();
+            }
+        } else if(sound == 0 && soundTimer != sf::seconds(0)) {
+            soundTimer = sf::seconds(0);
+        }
         instrNo++;
-        if(delay > 0) --delay;
-        if(sound > 0) --sound;
 
     } else state = false;
     return state;
@@ -352,6 +378,9 @@ void Processor::executeInstruction(uint16_t opcode) {
                 break;
             }
             bool keyPressed = pkb->isKeyPressed(registers.at(Vx));
+#ifdef DEBUG
+            if(keyPressed) std::cout << "Key " << int(registers.at(Vx)) << " was pressed!\n";
+#endif
             if(skip == 0x9e) {
                 if(keyPressed) PC += 2;
             } else if(skip == 0xa1) {
