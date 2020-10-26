@@ -45,7 +45,7 @@ void Mcomp::run(const std::string &path, uint16_t addr) {
     boot(path, addr);
     while(CPU.run()) {
         // temp fix for text display
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 

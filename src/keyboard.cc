@@ -47,3 +47,7 @@ bool Keyboard::isKeyPressed(int k) {
     }
     return k == key;
 }
+
+bool Keyboard::isConnected() {
+    return (win != nullptr);
+}

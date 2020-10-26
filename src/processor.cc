@@ -6,11 +6,6 @@
 #include <iostream>
 #endif
 
-/*
- * TO-DO:
- * Can possibly replace member SP with typedef callStack.top()
- */
-
 /* ***************************** METHOD ABSTRACTIONS ********************************* */
 
 
@@ -346,13 +341,10 @@ void Processor::executeInstruction(uint16_t opcode) {
          * Skip next instruction if key with the value of Vx is not pressed
          */
         case 0xe000 ... 0xefff: {
-            /*
-             * Add keyboard stuff here
-             */
             auto Vxkk = getVxkk(opcode);
             uint8_t Vx = Vxkk.first;
             uint8_t skip = Vxkk.second;
-            if(!pkb) {
+            if(!pkb || !pkb->isConnected()) {
 #ifdef DEBUG
                 std::cout << "Keyboard not connected! Note: Keyboard is not supported with ASCII graphics!\n";
 #endif
@@ -386,7 +378,7 @@ void Processor::executeInstruction(uint16_t opcode) {
                  * Wait for a key press, store the value of the key in Vx
                  */
                 case 0x0a:
-                    if(!pkb) {
+                    if(!pkb || !pkb->isConnected()) {
 #ifdef DEBUG
                         std::cout << "Keyboard not connected! Note: Keyboard is not supported with ASCII graphics!\n";
 #endif

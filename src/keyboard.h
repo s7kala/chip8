@@ -8,6 +8,7 @@ class Keyboard {
         int waitForKey();
         bool isKeyPressed(int);
         void attach(sf::RenderWindow*);
+        bool isConnected();
     private:
         sf::RenderWindow* win;
 };

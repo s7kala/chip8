@@ -14,7 +14,6 @@ class GraphicsDisplay : public Display {
         bool notify(const Subject& whoFrom) override;
     private:
         sf::RenderWindow window;
-        std::vector<sf::Uint8> screen;
         void clearScreen();
         friend class Mcomp;
 };

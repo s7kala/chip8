@@ -1,30 +1,30 @@
 #include "graphicsdisplay.h"
 
-void renderingThread(sf::RenderWindow* window) {
-    window->setActive(true);
-
-   // img.create(GFX_WIDTH, GFX_HEIGHT, screen.data());
-   // while(window->isOpen()) {
-
-   //     window->display();
-   // }
-}
-
-GraphicsDisplay::GraphicsDisplay(): window{sf::VideoMode(GFX_WIDTH, GFX_HEIGHT), "SFML Window"} {
-    //  window.setActive(false);
-    //  sf::Thread thread(&renderingThread, &window);
-    //  thread.launch();
-      for(int i = 0; i < GFX_HEIGHT * GFX_WIDTH; ++i) {
-          screen.emplace_back(0);
-      }
-}
+GraphicsDisplay::GraphicsDisplay(): window{sf::VideoMode(GFX_WIDTH, GFX_HEIGHT), "CHIP-8 Emulator"} {}
 
 void GraphicsDisplay::clearScreen() {
-    window.clear(sf::Color(0));
+    for(auto &row : screen) {
+        for(auto &pixel : row) {
+            pixel = 0;
+        }
+    }
+    window.clear();
 }
 
 void GraphicsDisplay::view() {
-
+    int i = 0;
+    for(auto const &row : screen) {
+        int j = 0;
+        for(auto const &pixel : row) {
+            sf::RectangleShape rectangle(sf::Vector2f(10, 10));
+            rectangle.setPosition(j, i);
+            if(!pixel) rectangle.setFillColor(sf::Color(0, 0, 0));
+            window.draw(rectangle);
+            j += 10;
+        }
+        i += 10;
+    }
+    window.display();
 }
 
 bool GraphicsDisplay::notify(const Subject &whoFrom) {
@@ -40,14 +40,14 @@ bool GraphicsDisplay::notify(const Subject &whoFrom) {
         /*
          * DRW Vx, Vy, nibble
          * Display n-byte sprite at (Vx, Vy), set VF = collision
-
+         */
         int n = info.sprite.size();
         for(int i = info.Vy; i < info.Vy + n; ++i) {
             uint8_t row = info.sprite.at(i - info.Vy);
             int ctr = 7;
             for(int j = info.Vx; j < info.Vx + REG_SIZE; ++j) {
                 if((row >> ctr--) & 0x01) {
-                    int maxHeight = GFX_HEIGHT - 1, maxWidth = GFX_WIDTH - 1;
+                    int maxHeight = HEIGHT - 1, maxWidth = WIDTH - 1;
                     int x = j & maxWidth, y = i & maxHeight;
                     if(screen.at(y).at(x) == 1) {
                         screen.at(y).at(x) = 0;
@@ -58,7 +58,6 @@ bool GraphicsDisplay::notify(const Subject &whoFrom) {
                 }
             }
         }
-         */
     }
     view();
     return collision;
