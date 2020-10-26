@@ -1,9 +1,7 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
-#include "memory.h"
 #include "subject.h"
-#include "keyboard.h"
 #include <vector>
 #include <stack>
 #include <cstdint>
@@ -17,10 +15,11 @@
  * Add later (for now, call stack is environment-dependent)
 #define STACK_SIZE 16
 */
-
+class Keypad;
+class Memory;
 class Processor : public Subject {
     public:
-        explicit Processor(Memory* pMem, Keyboard* kb);
+        explicit Processor(Memory* pMem, Keypad* kb);
         /*
          * Init proc (push retAddr to callStack)
          */
@@ -50,7 +49,7 @@ class Processor : public Subject {
         uint16_t PC;
         std::stack<uint16_t> callStack;
         Memory* pMem;
-        Keyboard* pkb;
+        Keypad* pkb;
         std::random_device dev;
         std::mt19937 engine;
         std::uniform_int_distribution<uint8_t> dist;

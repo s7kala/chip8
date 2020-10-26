@@ -15,7 +15,7 @@
 
 class Memory;
 class Display;
-class Keyboard;
+class Keypad;
 class Mcomp {
     public:
         explicit Mcomp(bool graphics);
@@ -34,7 +34,7 @@ class Mcomp {
         ~Mcomp();
     private:
         Memory* RAM;
-        Keyboard* kb;
+        Keypad* kb;
         Processor CPU;
         Display* screen;
         sf::Clock timer;

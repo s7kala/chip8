@@ -1,11 +1,12 @@
 #include "processor.h"
 #include "ch8excepts.h"
+#include "keypad.h"
+#include "memory.h"
 #include <sstream>
 #ifdef DEBUG
 #include "../asm/dasm.h"
 #include <iostream>
 #endif
-#include <iostream>
 
 /* ***************************** METHOD ABSTRACTIONS ********************************* */
 
@@ -53,7 +54,7 @@ void InvalidCPUInstr(uint16_t opcode) {
 
 /* ********************************* METHODS *************************************** */
 
-Processor::Processor(Memory* pMem, Keyboard* pkb): pMem{pMem}, pkb{pkb}, engine{dev()}, dist(0,255), clock{sf::Clock{}},
+Processor::Processor(Memory* pMem, Keypad* pkb): pMem{pMem}, pkb{pkb}, engine{dev()}, dist(0,255), clock{sf::Clock{}},
         src{sf::SoundBuffer{}}, beep{sf::Sound{}} {
     for(int i = 0; i < GPR_NO; ++i)
         registers.emplace_back(0);
@@ -89,6 +90,8 @@ bool Processor::run() {
     }
     std::cout << "PC = 0x" << std::hex << int(PC) << '\n';
     std::cout << "I = 0x" << std::hex << int(I) << '\n';
+    std::cout << "DT = 0x" << std::hex << int(delay) << '\n';
+    std::cout << "ST = 0x" << std::hex << int(sound) << '\n';
     std::cout << "Stack top = 0x" << std::hex << int(callStack.top()) << '\n';
 #endif
     static int instrNo = 0;
@@ -377,7 +380,8 @@ void Processor::executeInstruction(uint16_t opcode) {
 #endif
                 break;
             }
-            bool keyPressed = pkb->isKeyPressed(registers.at(Vx));
+            int key = registers.at(Vx);
+            bool keyPressed = Keypad::isKeyPressed(registers.at(Vx));
 #ifdef DEBUG
             if(keyPressed) std::cout << "Key " << int(registers.at(Vx)) << " was pressed!\n";
 #endif
