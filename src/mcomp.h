@@ -14,9 +14,10 @@
 
 class Memory;
 class Display;
+class Keyboard;
 class Mcomp {
     public:
-        explicit Mcomp(bool graphics=false);
+        explicit Mcomp(bool graphics);
         /*
          * Load and then jump to that addr
          */
@@ -32,6 +33,7 @@ class Mcomp {
         ~Mcomp();
     private:
         Memory* RAM;
+        Keyboard* kb;
         Processor CPU;
         Display* screen;
         bool graphics;

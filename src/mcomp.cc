@@ -2,6 +2,7 @@
 #include "memory.h"
 #include "textdisplay.h"
 #include "graphicsdisplay.h"
+#include "keyboard.h"
 
 #include <fstream>
 #include <stdexcept>
@@ -9,8 +10,12 @@
 #include <thread>
 
 
-Mcomp::Mcomp(bool graphics): RAM{new Memory(4)}, CPU(RAM), graphics{graphics} {
-    if(graphics) screen = new GraphicsDisplay;
+Mcomp::Mcomp(bool graphics): RAM{new Memory(4)}, kb{new Keyboard}, CPU(RAM, kb), graphics{graphics} {
+    if(graphics) {
+        auto disp = new GraphicsDisplay;
+        kb->attach(&disp->window);
+        screen = disp;
+    }
     else screen = new TextDisplay;
     CPU.attach(screen);
     // add sprites in interpreter memory (0x000 to 0x1ff)
@@ -40,7 +45,7 @@ void Mcomp::run(const std::string &path, uint16_t addr) {
     boot(path, addr);
     while(CPU.run()) {
         // temp fix for text display
-    //    std::this_thread::sleep_for(std::chrono::milliseconds(4));
+        std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
 }
 
@@ -74,4 +79,5 @@ uint16_t Mcomp::load(const std::string &path, uint16_t addr) {
 Mcomp::~Mcomp() {
     delete RAM;
     delete screen;
+    delete kb;
 }

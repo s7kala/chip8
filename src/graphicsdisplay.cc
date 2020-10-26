@@ -2,7 +2,7 @@
 
 void renderingThread(sf::RenderWindow* window) {
     window->setActive(true);
-    sf::Image img;
+
    // img.create(GFX_WIDTH, GFX_HEIGHT, screen.data());
    // while(window->isOpen()) {
 
@@ -11,12 +11,12 @@ void renderingThread(sf::RenderWindow* window) {
 }
 
 GraphicsDisplay::GraphicsDisplay(): window{sf::VideoMode(GFX_WIDTH, GFX_HEIGHT), "SFML Window"} {
-    window.setActive(false);
-    sf::Thread thread(&renderingThread, &window);
-    thread.launch();
-    for(int i = 0; i < GFX_HEIGHT * GFX_WIDTH; ++i) {
-        screen.emplace_back(0);
-    }
+    //  window.setActive(false);
+    //  sf::Thread thread(&renderingThread, &window);
+    //  thread.launch();
+      for(int i = 0; i < GFX_HEIGHT * GFX_WIDTH; ++i) {
+          screen.emplace_back(0);
+      }
 }
 
 void GraphicsDisplay::clearScreen() {

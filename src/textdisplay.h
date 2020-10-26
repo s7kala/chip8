@@ -1,6 +1,10 @@
 #ifndef TEXTDISPLAY_H
 #define TEXTDISPLAY_H
 
+/*
+ * THIS MODULE IS NOW DEPRECATED AND KEPT ONLY FOR DEBUGGING PURPOSES
+ */
+
 #include "display.h"
 
 #define HEIGHT 32

@@ -16,6 +16,7 @@ class GraphicsDisplay : public Display {
         sf::RenderWindow window;
         std::vector<sf::Uint8> screen;
         void clearScreen();
+        friend class Mcomp;
 };
 
 #endif

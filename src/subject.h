@@ -8,6 +8,8 @@ class Observer;
 struct Info {
     std::vector<uint8_t> sprite;
     uint8_t Vx, Vy;
+    // keyboard
+    uint16_t opcode;
 };
 
 class Subject {

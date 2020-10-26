@@ -3,7 +3,7 @@
 
 #include "memory.h"
 #include "subject.h"
-//#include "display.h"
+#include "keyboard.h"
 #include <vector>
 #include <stack>
 #include <cstdint>
@@ -17,7 +17,7 @@
 
 class Processor : public Subject {
     public:
-        explicit Processor(Memory* pMem);
+        explicit Processor(Memory* pMem, Keyboard* kb);
         /*
          * Init proc (push retAddr to callStack)
          */
@@ -42,6 +42,7 @@ class Processor : public Subject {
         uint16_t PC;
         std::stack<uint16_t> callStack;
         Memory* pMem;
+        Keyboard* pkb;
         std::random_device dev;
         std::mt19937 engine;
         std::uniform_int_distribution<uint8_t> dist;

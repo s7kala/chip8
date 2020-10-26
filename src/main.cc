@@ -14,7 +14,7 @@ void help(const char* progname) {
     std::cout << "It provides a virtual machine environment to run CHIP-8 programs.\n";
     std::cout << "Available options:\n";
     std::cout << "\t-E or --ETI660: Input program is for the ETI 660 computer\n";
-    std::cout << "\t-g or --graphics: Run in external graphics mode (default ASCII graphics on terminal)\n";
+    std::cout << "\t-a or --text: Run in ASCII graphics mode (deprecated, default SFML graphics)\n";
     std::cout << "\t-v or --verbose: Enable verbosity mode\n";
     std::cout << "\t-h or --help: Print this message\n";
     std::cout << "Learn more here: https://github.com/s7kala/chip8\n";
@@ -22,7 +22,7 @@ void help(const char* progname) {
 
 int main(int argc, char** argv) {
     int rc = 0;
-    bool graphics = false;
+    bool graphics = true;
     if(argc < 2) {
         use(argv[0]);
         rc = 1;
@@ -36,9 +36,9 @@ int main(int argc, char** argv) {
         for(int i = 1; i < argc - 1; ++i) {
             std::string option(argv[i]);
             if(option == "-E" || option == "--ETI660") {
-
-            } else if(option == "-g" || option == "--graphics") {
-                graphics = true;
+#define ETI660
+            } else if(option == "-a" || option == "--text") {
+                graphics = false;
             } else if(option == "-v" || option == "--verbose") {
 
             } else if (option == "-h" || option == "--help") {

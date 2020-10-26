@@ -1,9 +1,9 @@
 #include "processor.h"
 #include "ch8excepts.h"
 #include <sstream>
-#include <curses.h>
 #ifdef DEBUG
 #include "../asm/dasm.h"
+#include <iostream>
 #endif
 
 /*
@@ -57,7 +57,7 @@ void InvalidCPUInstr(uint16_t opcode) {
 
 /* ********************************* METHODS *************************************** */
 
-Processor::Processor(Memory* pMem): pMem{pMem}, engine{dev()}, dist(0,255) {
+Processor::Processor(Memory* pMem, Keyboard* pkb): pMem{pMem}, pkb{pkb}, engine{dev()}, dist(0,255) {
     for(int i = 0; i < GPR_NO; ++i)
         registers.emplace_back(0);
     delay = sound = I = PC = 0;
@@ -352,10 +352,17 @@ void Processor::executeInstruction(uint16_t opcode) {
             auto Vxkk = getVxkk(opcode);
             uint8_t Vx = Vxkk.first;
             uint8_t skip = Vxkk.second;
+            if(!pkb) {
+#ifdef DEBUG
+                std::cout << "Keyboard not connected! Note: Keyboard is not supported with ASCII graphics!\n";
+#endif
+                break;
+            }
+            bool keyPressed = pkb->isKeyPressed(registers.at(Vx));
             if(skip == 0x9e) {
-
+                if(keyPressed) PC += 2;
             } else if(skip == 0xa1) {
-
+                if(!keyPressed) PC += 2;
             } else InvalidCPUInstr(opcode);
         } break;
         /*
@@ -379,7 +386,13 @@ void Processor::executeInstruction(uint16_t opcode) {
                  * Wait for a key press, store the value of the key in Vx
                  */
                 case 0x0a:
-                    // Add keyboard stuff here
+                    if(!pkb) {
+#ifdef DEBUG
+                        std::cout << "Keyboard not connected! Note: Keyboard is not supported with ASCII graphics!\n";
+#endif
+                        break;
+                    }
+                    registers.at(Vx) = pkb->waitForKey();
                     break;
                 /*
                  * Fx15 - LD DT, Vx
