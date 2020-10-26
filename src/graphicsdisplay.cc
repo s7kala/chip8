@@ -8,7 +8,7 @@ void GraphicsDisplay::clearScreen() {
             pixel = 0;
         }
     }
-    window.clear();
+    view();
 }
 
 void GraphicsDisplay::view() {

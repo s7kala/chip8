@@ -5,6 +5,7 @@
 #include "../asm/dasm.h"
 #include <iostream>
 #endif
+#include <iostream>
 
 /* ***************************** METHOD ABSTRACTIONS ********************************* */
 
