@@ -13,12 +13,20 @@ CH8_ROOT=$(pwd)
 ```bash
 cd ${CH8_ROOT}/src
 ```
+You'll need to install SFML:
+```bash
+sudo apt-get install libsfml-dev (Ubuntu/Debian)
+```
 Build with CMake:
 ```bash
 sudo apt-get install cmake  (Ubuntu/Debian)
 cmake .
 make
 ./ch8vm --help
+```
+Boot an image:
+```bash
+./ch8vm ${CH8_ROOT}/roms/Airplane.ch8
 ```
 ## CHIP-8 Assembler and Disassembler
 ```bash
