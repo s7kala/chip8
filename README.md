@@ -30,6 +30,7 @@ Boot an image:
 ```
 ### Test ROMs
 ##### Airplane.ch8
+![alt text](https://github.com/s7kala/chip8/blob/master/docs/airplane.png?raw=true)
 Blitz type bomber game. Press 'S' ('8' on the CHIP-8 keypad) to drop a bomb.
 There are 5 levels and 4 lives; the objective is to drop a bomb without hitting another plane.
 ## CHIP-8 Assembler and Disassembler
