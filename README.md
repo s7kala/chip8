@@ -28,6 +28,10 @@ Boot an image:
 ```bash
 ./ch8vm ${CH8_ROOT}/roms/Airplane.ch8
 ```
+### Test ROMs
+##### Airplane.ch8
+Blitz type bomber game. Press 'S' ('8' on the CHIP-8 keypad) to drop a bomb.
+There are 5 levels and 4 lives; the objective is to drop a bomb without hitting another plane.
 ## CHIP-8 Assembler and Disassembler
 ```bash
 cd ${CH8_ROOT}/asm
