@@ -14,7 +14,7 @@ void GraphicsDisplay::clearScreen() {
 
 void GraphicsDisplay::view() {
     if(!window.isOpen()) throw DisplayException("Display window closed");
-    sf::Event event;
+    sf::Event event{};
     while(window.pollEvent(event)) {
         if(event.type == sf::Event::Closed) {
             window.close();

@@ -60,12 +60,8 @@ int main(int argc, char** argv) {
             std::cout << "======================================\n";
             // step through each instance of fetch-execute cycle
             char ch;
-            //emulator.boot(file);
-#ifdef STEP
+            emulator.boot(file);
             while(emulator.emulate(file) && std::cin.get(ch));
-#else
-            emulator.run(file);
-#endif
 #else
             emulator.run(file);
 #endif
